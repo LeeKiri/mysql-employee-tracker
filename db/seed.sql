@@ -15,6 +15,7 @@ CREATE TABLE roles (
     id INT NOT NULL AUTO_INCREMENT,
     title VARCHAR(30) NOT NULL,
     department_id INT,
+    salary INT,
     PRIMARY KEY (id)
 );
 
@@ -31,3 +32,32 @@ INSERT INTO employee (id, first_name, last_name, role_id, manager_id)
 VALUES(3, 'Grace', 'Jones', 1, 3);
 INSERT INTO employee (id, first_name, last_name, role_id, manager_id)
 VALUES(4, 'Nathan', 'Green', 4, 2);
+
+INSERT INTO department (id, name)
+VALUES(1, 'Sales');
+INSERT INTO department (id, name)
+VALUES(2, 'Engineering');
+INSERT INTO department (id, name)
+VALUES(3, 'Finance');
+INSERT INTO department (id, name)
+VALUES(4, 'Legal');
+INSERT INTO department (id, name)
+VALUES(5, 'Human Resources');
+
+INSERT INTO roles (id, title, salary, department_id)
+VALUES(1, 'Lawyer', 150000, 4);
+
+INSERT INTO roles (id, title, salary, department_id)
+VALUES(2, 'Legal Team Lead', 110000, 4);
+
+INSERT INTO roles (id, title, salary, department_id)
+VALUES(3, 'Sales Lead', 90000, 1);
+
+INSERT INTO roles (id, title, salary, department_id)
+VALUES(4, 'Software Engineer', 140000, 2);
+
+INSERT INTO roles (id, title, salary, department_id)
+VALUES(5, 'Accountant', 80000, 3);
+
+INSERT INTO roles (id, title, salary, department_id)
+VALUES(6, 'Talent Aquisition', 90000, 5);

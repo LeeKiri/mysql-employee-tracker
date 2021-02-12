@@ -101,7 +101,12 @@ const promptQuestions = () => {
 const viewEmployees = () => {
   console.log("Selecting all employees");
   connection.query(
-    "SELECT * FROM employee ORDER BY employee.id ASC",
+    `
+    SELECT employee.id, employee.first_name, employee.last_name, roles.title, roles.salary, department.name, CONCAT(manager.first_name, " ", manager.last_name) manager
+    FROM employee 
+    LEFT JOIN roles ON employee.role_id = roles.id
+    LEFT JOIN department ON roles.department_id = department.id
+    LEFT JOIN employee manager ON manager.id = employee.manager_id`,
     (err, res) => {
       if (err) throw err;
       console.log(
@@ -280,13 +285,14 @@ const addRole = () => {
             .prompt([
               {
                 type: "list",
-                name: "role",
+                name: "id",
                 message: "What department is this role in?",
                 choices: departmentId,
               },
             ])
             .then((addDepartment) => {
               const dep = addDepartment.id;
+              console.log("add departments", addDepartment);
 
               console.log(`Adding new role`);
               connection.query(
@@ -298,9 +304,7 @@ const addRole = () => {
                 },
                 (err, res) => {
                   if (err) throw err;
-                  console.log(
-                    `${answer.title} has been added`
-                  );
+                  console.log(`${answer.title} has been added`);
                   promptQuestions();
                 }
               );
@@ -311,7 +315,39 @@ const addRole = () => {
 };
 
 // addDepartment();
-// removeEmployee();
+const removeEmployee = () => {
+  connection.query(
+    `SELECT employee.id, employee.first_name, employee.last_name FROM employee`,
+    (error, data) => {
+      if (error) throw error;
+      const employees = data.map(({ id, first_name, last_name }) => ({
+        value: id,
+        name: first_name + " " + last_name,
+      }));
+      inquirer
+        .prompt([
+          {
+            type: "list",
+            name: "id",
+            message: "Which employee would you like to delete?",
+            choices: employees,
+          },
+        ])
+        .then((answer) => {
+          console.log(answer)
+          connection.query(
+            `DELETE FROM employee WHERE id = ${answer.id}`,
+            (error, data) => {
+              if (error) throw error;
+              promptQuestions();
+            }
+          );
+        });
+    }
+  );
+};
+
+// })
 // updateEmployeeRole();
 // updateEmployeeManager();
 // exit();

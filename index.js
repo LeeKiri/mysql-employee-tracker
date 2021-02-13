@@ -163,7 +163,8 @@ const viewEmployeesByRole = () => {
               )
             );
             console.log(
-              `                              ` + chalk.green.bold(`Employees by Role`)
+              `                              ` +
+                chalk.green.bold(`Employees by Role`)
             );
             console.log(
               chalk.yellow.bold(
@@ -178,13 +179,62 @@ const viewEmployeesByRole = () => {
             );
             promptQuestions();
           }
-          );
+        );
       });
   });
 };
 
 //funcion to view employees by department
-// viewEmployeesByDepartment();
+const viewEmployeesByDepartment = () => {
+  connection.query(query.getDepartments, (err, res) => {
+    if (err) throw err;
+    const departments = res.map(({ id, name }) => ({
+      value: id,
+      name: name,
+    }));
+    inquirer
+      .prompt([
+        {
+          name: "dep",
+          type: "rawlist",
+          message: "What department would you like to view?",
+          choices: departments,
+        },
+      ])
+      .then((answer) => {
+        console.log(`Getting employees by department ${answer.dep}`);
+        connection.query(
+          query.selectEmployeesByDepartment,
+          answer.dep,
+          (err, res) => {
+            if (err) throw err;
+            console.log(
+              chalk.yellow.bold(
+                `====================================================================================`
+              )
+            );
+            console.log(
+              `                              ` +
+                chalk.green.bold(`Employees by Department`)
+            );
+            console.log(
+              chalk.yellow.bold(
+                `====================================================================================`
+              )
+            );
+            console.table(res);
+            console.log(
+              chalk.yellow.bold(
+                `====================================================================================`
+              )
+            );
+            promptQuestions();
+          }
+        );
+      });
+  });
+};
+
 // function to view all departments
 const viewDepartments = () => {
   console.log(`Selecting all department`);

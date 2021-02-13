@@ -38,10 +38,20 @@ const getRoles =
 `SELECT roles.title, roles.id FROM roles`
 
 const selectEmployeesByRole =
-`SELECT employee.id, employee.first_name, employee.last_name, roles.title, manager_id 
+`SELECT employee.id, employee.first_name, employee.last_name, roles.title, employee.manager_id 
 FROM employee
 LEFT JOIN roles ON employee.role_id = roles.id
 WHERE employee.role_id = ?`
 
+const getDepartments = 
+`SELECT department.id, department.name FROM department`
 
-module.exports = {viewEmployees, selectRole, insertEmployee, viewRoles, getDepartment, insertRole, getEmployees, deleteEmployee, insertDepartment, getRoles, selectEmployeesByRole};
+const selectEmployeesByDepartment = 
+`SELECT employee.id, employee.first_name, employee.last_name, roles.title, roles.salary, employee.manager_id, department.name AS department
+FROM employee
+LEFT JOIN roles ON employee.role_id = roles.id
+LEFT JOIN department ON roles.department_id = department.id 
+WHERE department.id = ?`
+
+
+module.exports = {viewEmployees, selectRole, insertEmployee, viewRoles, getDepartment, insertRole, getEmployees, deleteEmployee, insertDepartment, getRoles, selectEmployeesByRole, getDepartments, selectEmployeesByDepartment};

@@ -133,6 +133,58 @@ const viewEmployees = () => {
     promptQuestions();
   });
 };
+// funtion to view employees bu role
+const viewEmployeesByRole = () => {
+  connection.query(query.getRoles, (err, res) => {
+    if (err) throw err;
+    const roles = res.map(({ id, title }) => ({
+      value: id,
+      name: title,
+    }));
+    inquirer
+      .prompt([
+        {
+          name: "role",
+          type: "rawlist",
+          message: "What role would you like to view?",
+          choices: roles,
+        },
+      ])
+      .then((answer) => {
+        console.log(`Getting employees by role ${answer.role}`);
+        connection.query(
+          query.selectEmployeesByRole,
+          answer.role,
+          (err, res) => {
+            if (err) throw err;
+            console.log(
+              chalk.yellow.bold(
+                `====================================================================================`
+              )
+            );
+            console.log(
+              `                              ` + chalk.green.bold(`Employees by Role`)
+            );
+            console.log(
+              chalk.yellow.bold(
+                `====================================================================================`
+              )
+            );
+            console.table(res);
+            console.log(
+              chalk.yellow.bold(
+                `====================================================================================`
+              )
+            );
+            promptQuestions();
+          }
+          );
+      });
+  });
+};
+
+//funcion to view employees by department
+// viewEmployeesByDepartment();
 // function to view all departments
 const viewDepartments = () => {
   console.log(`Selecting all department`);
@@ -308,6 +360,7 @@ const addRole = () => {
       });
     });
 };
+//funtion to add a department
 const addDepartment = () => {
   inquirer
     .prompt([
@@ -318,7 +371,7 @@ const addDepartment = () => {
       },
     ])
     .then((answer) => {
-        console.log(`Adding new department`);
+      console.log(`Adding new department`);
       connection.query(
         query.insertDepartment,
         { name: answer.title },
@@ -333,9 +386,9 @@ const addDepartment = () => {
 
 //function to remove an employee
 const removeEmployee = () => {
-  connection.query(query.getEmployees, (error, data) => {
-    if (error) throw error;
-    const employees = data.map(({ id, first_name, last_name }) => ({
+  connection.query(query.getEmployees, (err, res) => {
+    if (err) throw err;
+    const employees = res.map(({ id, first_name, last_name }) => ({
       value: id,
       name: first_name + " " + last_name,
     }));
@@ -358,13 +411,10 @@ const removeEmployee = () => {
   });
 };
 
+// updateEmployeeRole();
+// updateEmployeeManager();
+
 // ends the connection when user selects the exit option.
 const exit = () => {
   connection.end();
 };
-
-// })
-// updateEmployeeRole();
-// updateEmployeeManager();
-// viewEmployeesByRole();
-// viewEmployeesByDepartment();

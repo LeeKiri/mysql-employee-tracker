@@ -1,10 +1,12 @@
 const viewEmployees = 
-`SELECT employee.id, employee.first_name, employee.last_name, roles.title, roles.salary, department.name, 
-CONCAT(manager.first_name, " ", manager.last_name) manager
+`SELECT employee.id, employee.first_name, employee.last_name, 
+roles.title, roles.salary, department.name AS department,
+CONCAT(m_e.first_name, " ", m_e.last_name) AS manager
 FROM employee 
 LEFT JOIN roles ON employee.role_id = roles.id
 LEFT JOIN department ON roles.department_id = department.id
-LEFT JOIN employee manager ON manager.id = employee.manager_id`
+LEFT JOIN employee AS m_e ON employee.manager_id = m_e.id
+`
 
 const selectRole =
 `SELECT roles.id, roles.title FROM roles`
@@ -32,5 +34,14 @@ const deleteEmployee =
 const insertDepartment =
 `INSERT INTO department SET ?`
 
+const getRoles =
+`SELECT roles.title, roles.id FROM roles`
 
-module.exports = {viewEmployees, selectRole, insertEmployee, viewRoles, getDepartment, insertRole, getEmployees, deleteEmployee, insertDepartment};
+const selectEmployeesByRole =
+`SELECT employee.id, employee.first_name, employee.last_name, roles.title, manager_id 
+FROM employee
+LEFT JOIN roles ON employee.role_id = roles.id
+WHERE employee.role_id = ?`
+
+
+module.exports = {viewEmployees, selectRole, insertEmployee, viewRoles, getDepartment, insertRole, getEmployees, deleteEmployee, insertDepartment, getRoles, selectEmployeesByRole};

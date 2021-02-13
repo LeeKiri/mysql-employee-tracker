@@ -91,7 +91,7 @@ const promptQuestions = () => {
         case "Remove employee":
           removeEmployee();
           break;
-        case "Update employee roles":
+        case "Update employee role":
           updateEmployeeRole();
           break;
         case "Update employee manager":
@@ -183,7 +183,6 @@ const viewEmployeesByRole = () => {
       });
   });
 };
-
 //funcion to view employees by department
 const viewEmployeesByDepartment = () => {
   connection.query(query.getDepartments, (err, res) => {
@@ -234,7 +233,6 @@ const viewEmployeesByDepartment = () => {
       });
   });
 };
-
 // function to view all departments
 const viewDepartments = () => {
   console.log(`Selecting all department`);
@@ -433,7 +431,6 @@ const addDepartment = () => {
       );
     });
 };
-
 //function to remove an employee
 const removeEmployee = () => {
   connection.query(query.getEmployees, (err, res) => {
@@ -452,16 +449,57 @@ const removeEmployee = () => {
         },
       ])
       .then((answer) => {
-        connection.query(query.deleteEmployee, answer.id, (error, data) => {
-          if (error) throw error;
+        connection.query(query.deleteEmployee, answer.id, (err, res) => {
+          if (err) throw err;
           console.log(`Employee has been deleted`);
           promptQuestions();
         });
       });
   });
 };
-
-// updateEmployeeRole();
+const updateEmployeeRole = () => {
+  connection.query(query.getEmployees, (err, res) => {
+    if (err) throw err;
+    const employees = res.map(({ id, first_name, last_name }) => ({
+      value: id,
+      name: first_name + " " + last_name,
+    }));
+    connection.query(query.getRoles, (err, res) => {
+      if (err) throw err;
+      const roles = res.map(({ id, title }) => ({
+        value: id,
+        name: title,
+      }));
+      inquirer
+        .prompt([
+          {
+            type: "rawlist",
+            name: "emp",
+            message: "Which employee would you like to change?",
+            choices: employees,
+          },
+          {
+            type: "rawlist",
+            name: "rol",
+            message: "What role would you like to assign?",
+            choices: roles,
+          },
+        ])
+        .then((answer) => {
+          connection.query(
+            query.updateEmployee,
+            answer.rol,
+            answer.emp,
+            (err, res) => {
+              if (err) throw err;
+              console.log(`Employee role has been updated`);
+              promptQuestions();
+            }
+          );
+        });
+    });
+  });
+};
 // updateEmployeeManager();
 
 // ends the connection when user selects the exit option.

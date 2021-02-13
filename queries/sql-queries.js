@@ -15,7 +15,7 @@ const insertEmployee =
 `INSERT INTO employee SET ?`
 
 const viewRoles = 
-`SELECT roles.id, roles.title, roles.salary, department.name 
+`SELECT roles.id, roles.title, roles.salary, department.name AS department
 FROM roles
 LEFT JOIN department ON roles.department_id = department.id`
 
@@ -38,20 +38,26 @@ const getRoles =
 `SELECT roles.title, roles.id FROM roles`
 
 const selectEmployeesByRole =
-`SELECT employee.id, employee.first_name, employee.last_name, roles.title, employee.manager_id 
+`SELECT employee.id, employee.first_name, employee.last_name, roles.title, roles.salary, 
+CONCAT(m_e.first_name, " ", m_e.last_name) AS manager
 FROM employee
 LEFT JOIN roles ON employee.role_id = roles.id
+LEFT JOIN employee AS m_e ON employee.manager_id = m_e.id
 WHERE employee.role_id = ?`
 
 const getDepartments = 
 `SELECT department.id, department.name FROM department`
 
 const selectEmployeesByDepartment = 
-`SELECT employee.id, employee.first_name, employee.last_name, roles.title, roles.salary, employee.manager_id, department.name AS department
+`SELECT employee.id, employee.first_name, employee.last_name, roles.title, roles.salary, department.name AS department, CONCAT(m_e.first_name, " ", m_e.last_name) AS manager
 FROM employee
 LEFT JOIN roles ON employee.role_id = roles.id
 LEFT JOIN department ON roles.department_id = department.id 
+LEFT JOIN employee AS m_e ON employee.manager_id = m_e.id
 WHERE department.id = ?`
 
+const updateEmployee =
+`UPDATE employee SET ? WHERE ?`
 
-module.exports = {viewEmployees, selectRole, insertEmployee, viewRoles, getDepartment, insertRole, getEmployees, deleteEmployee, insertDepartment, getRoles, selectEmployeesByRole, getDepartments, selectEmployeesByDepartment};
+
+module.exports = {viewEmployees, selectRole, insertEmployee, viewRoles, getDepartment, insertRole, getEmployees, deleteEmployee, insertDepartment, getRoles, selectEmployeesByRole, getDepartments, selectEmployeesByDepartment, updateEmployee};

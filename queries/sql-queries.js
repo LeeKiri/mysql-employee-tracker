@@ -59,5 +59,23 @@ WHERE department.id = ?`
 const updateEmployee =
 `UPDATE employee SET ? WHERE ?`
 
+const updateManager = 
+`UPDATE employee SET ? WHERE ?`
 
-module.exports = {viewEmployees, selectRole, insertEmployee, viewRoles, getDepartment, insertRole, getEmployees, deleteEmployee, insertDepartment, getRoles, selectEmployeesByRole, getDepartments, selectEmployeesByDepartment, updateEmployee};
+const viewEmployeeManager =
+`SELECT employee.id, employee.first_name, employee.last_name, roles.title AS role 
+FROM employee 
+LEFT JOIN roles ON employee.role_id = roles.id 
+WHERE employee.id IN 
+(SELECT DISTINCT manager_id FROM employee)
+ORDER BY(employee.id) ASC;`
+
+const viewManagersTeam =
+`SELECT employee.id, employee.first_name, employee.last_name, roles.title AS role,
+CONCAT(m_e.first_name, " ", m_e.last_name) AS manager
+FROM employee
+LEFT JOIN roles ON employee.role_id = roles.id
+LEFT JOIN employee AS m_e ON employee.manager_id = m_e.id
+WHERE employee.manager_id = ?`
+
+module.exports = {viewEmployees, selectRole, insertEmployee, viewRoles, getDepartment, insertRole, getEmployees, deleteEmployee, insertDepartment, getRoles, selectEmployeesByRole, getDepartments, selectEmployeesByDepartment, updateEmployee, updateManager, viewEmployeeManager, viewManagersTeam};

@@ -51,6 +51,7 @@ const promptQuestions = () => {
         "View all employees",
         "View employees by role",
         "View employees by department",
+        "View employees by manager",
         "View all roles",
         "View all departments",
         "Add an employee",
@@ -96,6 +97,9 @@ const promptQuestions = () => {
           break;
         case "Update employee manager":
           updateEmployeeManager();
+          break;
+        case "View employees by manager":
+          viewEmployeesByManager();
           break;
         case "Exit":
           exit();
@@ -457,6 +461,7 @@ const removeEmployee = () => {
       });
   });
 };
+//function to update employee
 const updateEmployeeRole = () => {
   connection.query(query.getEmployees, (err, res) => {
     if (err) throw err;
@@ -488,8 +493,14 @@ const updateEmployeeRole = () => {
         .then((answer) => {
           connection.query(
             query.updateEmployee,
-            answer.rol,
-            answer.emp,
+            [
+              {
+                role_id: answer.rol,
+              },
+              {
+                id: answer.emp,
+              },
+            ],
             (err, res) => {
               if (err) throw err;
               console.log(`Employee role has been updated`);
@@ -500,8 +511,101 @@ const updateEmployeeRole = () => {
     });
   });
 };
-// updateEmployeeManager();
+// function to update employees manager
+const updateEmployeeManager = () => {
+  connection.query(query.getEmployees, (err, res) => {
+    if (err) throw err;
+    const employees = res.map(({ id, first_name, last_name }) => ({
+      value: id,
+      name: first_name + " " + last_name,
+    }));
+    inquirer
+      .prompt([
+        {
+          type: "list",
+          name: "empChange",
+          message: "Which employee would you like to change?",
+          choices: employees,
+        },
+        {
+          type: "list",
+          name: "newMan",
+          message: "Who will be their new manager?",
+          choices: employees,
+        },
+      ])
+      .then((answer) => {
+        connection.query(
+          query.updateManager,
+          [
+            {
+              manager_id: answer.newMan,
+            },
+            {
+              id: answer.empChange,
+            },
+          ],
+          (err, res) => {
+            if (err) throw err;
+            console.log(`Employee manager has been updated`);
+            promptQuestions();
+          }
+        );
+      });
+  });
+};
+//funtion to view employees by manager
+const viewEmployeesByManager = () => {
+  connection.query(query.viewEmployeeManager, (err, res) => {
+    if (err) throw err;
+    const managers = res.map(({ id, first_name, last_name }) => ({
+      value: id,
+      name: first_name + " " + last_name,
+    }));
+    inquirer
+      .prompt([
+        {
+          type: "list",
+          name: "man",
+          message: "Which manager's team would you like to view?",
+          choices: managers,
+        },
+      ])
+      .then((answer) => {
+        connection.query(query.viewManagersTeam, answer.man, (err, res) => {
+          if (err) throw err;
+          console.log(
+            chalk.yellow.bold(
+              `====================================================================================`
+            )
+          );
+          console.log(
+            `                              ` +
+              chalk.green.bold(`View Managers' Team`)
+          );
+          console.log(
+            chalk.yellow.bold(
+              `====================================================================================`
+            )
+          );
+          console.table(res);
+          console.log(
+            chalk.yellow.bold(
+              `====================================================================================`
+            )
+          );
+          promptQuestions();
+        });
+      });
+  });
+};
 
+// delete departments
+// delete roles
+// const viewDepBudget = () => {
+
+// };
+//
 // ends the connection when user selects the exit option.
 const exit = () => {
   connection.end();

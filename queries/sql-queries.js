@@ -78,4 +78,10 @@ LEFT JOIN roles ON employee.role_id = roles.id
 LEFT JOIN employee AS m_e ON employee.manager_id = m_e.id
 WHERE employee.manager_id = ?`
 
-module.exports = {viewEmployees, selectRole, insertEmployee, viewRoles, getDepartment, insertRole, getEmployees, deleteEmployee, insertDepartment, getRoles, selectEmployeesByRole, getDepartments, selectEmployeesByDepartment, updateEmployee, updateManager, viewEmployeeManager, viewManagersTeam};
+const deleteDepartment =
+`DELETE FROM department WHERE id = ?`
+
+const deleteRole =
+`DELETE FROM roles WHERE id = ?`
+
+module.exports = {viewEmployees, selectRole, insertEmployee, viewRoles, getDepartment, insertRole, getEmployees, deleteEmployee, insertDepartment, getRoles, selectEmployeesByRole, getDepartments, selectEmployeesByDepartment, updateEmployee, updateManager, viewEmployeeManager, viewManagersTeam, deleteDepartment, deleteRole};

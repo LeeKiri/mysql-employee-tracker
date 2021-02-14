@@ -60,6 +60,8 @@ const promptQuestions = () => {
         "Remove employee",
         "Update employee role",
         "Update employee manager",
+        "Delete a department",
+        "Delete a role",
         "Exit",
       ],
     })
@@ -100,6 +102,12 @@ const promptQuestions = () => {
           break;
         case "View employees by manager":
           viewEmployeesByManager();
+          break;
+        case "Delete a department":
+          deleteDepartment();
+          break;
+        case "Delete a role":
+          deleteRole();
           break;
         case "Exit":
           exit();
@@ -600,8 +608,67 @@ const viewEmployeesByManager = () => {
   });
 };
 
-// delete departments
-// delete roles
+const deleteDepartment = () => {
+  connection.query(query.getDepartments, (err, res) => {
+    if (err) throw err;
+    const departments = res.map(({ id, name }) => ({
+      value: id,
+      name: name,
+    }));
+    inquirer
+      .prompt([
+        {
+          name: "dep",
+          type: "rawlist",
+          message: "Which department would you like to Delete?",
+          choices: departments,
+        },
+      ])
+      .then((answer) => {
+        connection.query(query.deleteDepartment, answer.dep);
+        console.log("The department has been deleted");
+        promptQuestions();
+      });
+  });
+};
+//function to delete role
+const deleteRole = () => {
+  connection.query(query.getRoles, (err, res) => {
+    if (err) throw err;
+    const roles = res.map(({ id, title }) => ({
+      value: id,
+      name: title,
+    }));
+    inquirer
+      .prompt([
+        {
+          name: "rol",
+          type: "rawlist",
+          message: "Which role would you like to Delete?",
+          choices: roles,
+        },
+        {
+          name: "nextStep",
+          type: "rawlist",
+          message: "What would you like to do with the employees who currently have this role?",
+          choices: ["Assign role_id: 0 (undefined)", "Assign a role from the current roles" ]
+        }
+      ])
+      .then((answer) => {
+        if(answer.nextStep === "Assign role_id: 0 (undefined)")
+        // get employee id with role_id and 
+        // query = update their record
+        if (answer.nextStep === "Assign a role from the current roles")
+        // roles.filter(answer.rol)
+        // inquirer. prompt([ raw list with roles])
+        // query = update employees where role id= answer.role ? answer.newrol
+        connection.query(query.deleteRole, answer.rol);
+        console.log("The role has been deleted");
+        promptQuestions();
+      });
+  });
+};
+
 // const viewDepBudget = () => {
 
 // };

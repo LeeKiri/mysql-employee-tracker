@@ -101,5 +101,11 @@ From roles
 LEFT JOIN department ON roles.department_id = department.id
 WHERE department.id = ?`
 
-module.exports = {viewEmployees, selectRole, insertEmployee, viewRoles, getDepartment, insertRole, getEmployees, deleteEmployee, insertDepartment, getRoles, selectEmployeesByRole, getDepartments, selectEmployeesByDepartment, updateEmployee, updateManager, viewEmployeeManager, viewManagersTeam, deleteDepartment, deleteRole, getSalary};
+const setRoleUndefined =
+`UPDATE roles SET ? WHERE ?`
+
+const assRole =
+`UPDATE employee SET ? WHERE ?`
+
+module.exports = {viewEmployees, selectRole, insertEmployee, viewRoles, getDepartment, insertRole, getEmployees, deleteEmployee, insertDepartment, getRoles, selectEmployeesByRole, getDepartments, selectEmployeesByDepartment, updateEmployee, updateManager, viewEmployeeManager, viewManagersTeam, deleteDepartment, deleteRole, getSalary, setRoleUndefined, assRole};
 // setUndefined

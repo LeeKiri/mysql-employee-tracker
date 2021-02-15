@@ -660,47 +660,102 @@ const viewEmployeesByManager = () => {
 //   });
 // };
 // //function to delete role
-// const deleteRole = () => {
-//   connection.query(query.getRoles, (err, res) => {
-//     if (err) throw err;
-//     const roles = res.map(({ id, title }) => ({
-//       value: id,
-//       name: title,
-//     }));
-//     inquirer
-//       .prompt([
-//         {
-//           name: "rol",
-//           type: "rawlist",
-//           message: "Which role would you like to Delete?",
-//           choices: roles,
-//         },
-//         {
-//           name: "nextStep",
-//           type: "rawlist",
-//           message:
-//             "What would you like to do with the employees who currently have this role?",
-//           choices: [
-//             "Assign role_id: 0 (undefined)",
-//             "Assign a role from the current roles",
-//           ],
-//         },
-//       ])
-//       .then((answer) => {
-//         if (answer.nextStep === "Assign role_id: 0 (undefined)")
-//           if (answer.nextStep === "Assign a role from the current roles")
-//             // get employee id with role_id and
-//             // query = update their record
-//             // roles.filter(answer.rol)
-//             // inquirer. prompt([ raw list with roles])
-//             // query = update employees where role id= answer.role ? answer.newrol
-//             connection.query(query.deleteRole, answer.rol);
-//         console.log("The role has been deleted");
-//         promptQuestions();
-//       });
-//   });
-// };
+let roleToChange;
+const deleteRole = () => {
+  connection.query(query.getRoles, (err, res) => {
+    if (err) throw err;
+    const roles = res.map(({ id, title }) => ({
+      value: id,
+      name: title,
+    }));
+    inquirer
+      .prompt([
+        {
+          name: "rol",
+          type: "rawlist",
+          message: "Which role would you like to Delete?",
+          choices: roles,
+        },
+        {
+          name: "resolve",
+          type: "rawlist",
+          message:
+            "What would you like to do with the employees who currently have this role?",
+          choices: [
+            "Assign their role as 'undefined'",
+            "Assign a role from the current roles",
+            "Create a new role",
+          ],
+        },
+      ])
+      .then((answer) => {
+        roleToChange = answer.rol;
+        if (answer.resolve == "Assign their role as 'undefined'") {
+          connection.query(
+            query.setRoleUndefined,
+            [
+              {
+                title: "undefined",
+              },
+              {
+                id: roleToChange,
+              },
+            ],
+            (err, res) => {
+              if (err) throw err;
+              connection.query(query.deleteRole, roleToChange, (err, res) => {
+                if (err) throw err;
+                promptQuestions();
+              });
+            }
+          );
+        } else if (answer.resolve == "Assign a role from the current roles") {
+          inquirer
+            .prompt([
+              {
+                name: "assRole",
+                type: "rawlist",
+                message: "Which role would you like to assign?",
+                choices: roles.filter((r) => r.value !== roleToChange),
+              },
+            ])
+            .then((answer) => {
+              connection.query(
+                query.assRole,
+                [
+                  {
+                    role_id: answer.assRole,
+                  },
+                  {
+                    role_id: answer.rol,
+                  },
+                ],
+                (err, res) => {
+                  if (err) throw err;
+                  connection.query(
+                    query.deleteRole,
+                    roleToChange,
+                    (err, res) => {
+                      if (err) throw err;
+                      promptQuestions();
+                    }
+                  );
+                }
+              );
+            });
+        }
+      });
+  });
+  // get employee id with role_id and
+  // query = update their record
+  // roles.filter(answer.rol)
+  // inquirer. prompt([ raw list with roles])
+  // query = update employees where role id= answer.role ? answer.newrol
+  // connection.query(query.deleteRole, answer.rol);
+  // console.log("The role has been deleted");
+};
 
+// funtion to view budgets by department
 const viewDepBudget = () => {
   connection.query(query.getDepartments, (err, res) => {
     if (err) throw err;
@@ -739,12 +794,13 @@ const viewDepBudget = () => {
             chalk.yellow.bold(
               `====================================================================================`
             )
-            );
-            promptQuestions();
+          );
+          promptQuestions();
         });
       });
   });
 };
+
 //
 // ends the connection when user selects the exit option.
 const exit = () => {

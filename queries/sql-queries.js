@@ -1,3 +1,4 @@
+//all database queries
 const viewEmployees = 
 `SELECT employee.id, employee.first_name, employee.last_name, 
 roles.title, roles.salary, department.name AS department,
@@ -7,7 +8,6 @@ LEFT JOIN roles ON employee.role_id = roles.id
 LEFT JOIN department ON roles.department_id = department.id
 LEFT JOIN employee AS m_e ON employee.manager_id = m_e.id
 `
-
 const selectRole =
 `SELECT roles.id, roles.title FROM roles`
 
@@ -84,28 +84,10 @@ const deleteDepartment =
 const deleteRole =
 `DELETE FROM roles WHERE id = ?`
 
-// const setUndefined =
-// `UPDATE employee, department 
-// SET ?, ? WHERE ?, ?`
-
-// UPDATE Books, Orders
-// SET Orders.Quantity = Orders.Quantity + 2,
-//     Books.InStock = Books.InStock - 2
-// WHERE
-//     Books.BookID = Orders.BookID
-//     AND Orders.OrderID = 1002;
-
 const getSalary =
 `SELECT department.name, department_id, SUM(roles.salary) AS total_budget
 From roles
 LEFT JOIN department ON roles.department_id = department.id
 WHERE department.id = ?`
 
-const setRoleUndefined =
-`UPDATE roles SET ? WHERE ?`
-
-const assRole =
-`UPDATE employee SET ? WHERE ?`
-
-module.exports = {viewEmployees, selectRole, insertEmployee, viewRoles, getDepartment, insertRole, getEmployees, deleteEmployee, insertDepartment, getRoles, selectEmployeesByRole, getDepartments, selectEmployeesByDepartment, updateEmployee, updateManager, viewEmployeeManager, viewManagersTeam, deleteDepartment, deleteRole, getSalary, setRoleUndefined, assRole};
-// setUndefined
+module.exports = {viewEmployees, selectRole, insertEmployee, viewRoles, getDepartment, insertRole, getEmployees, deleteEmployee, insertDepartment, getRoles, selectEmployeesByRole, getDepartments, selectEmployeesByDepartment, updateEmployee, updateManager, viewEmployeeManager, viewManagersTeam, deleteDepartment, deleteRole, getSalary,};

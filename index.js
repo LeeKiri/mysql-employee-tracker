@@ -29,7 +29,7 @@ connection.connect((err) => {
   console.log(``);
   console.log(
     `                                                          ` +
-      chalk.greenBright.bold("Created By: Joseph DeWoody")
+      chalk.greenBright.bold("Created By: Lee Templeton")
   );
   console.log(``);
   console.log(
@@ -611,7 +611,7 @@ const viewEmployeesByManager = () => {
       });
   });
 };
-
+//funtion to delete department
 const deleteDepartment = () => {
   connection.query(query.getDepartments, (err, res) => {
     if (err) throw err;
@@ -693,7 +693,6 @@ const deleteRole = () => {
       });
   });
 };
-
 // funtion to view budgets by department
 const viewDepBudget = () => {
   connection.query(query.getDepartments, (err, res) => {
@@ -739,8 +738,6 @@ const viewDepBudget = () => {
       });
   });
 };
-
-//
 // ends the connection when user selects the exit option.
 const exit = () => {
   connection.end();

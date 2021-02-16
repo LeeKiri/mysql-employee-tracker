@@ -59,8 +59,20 @@ Open Source. Contributions are welcome through github.
 ## Links
 ### Github Repository
 https://github.com/LeeKiri/mysql-employee-tracker
-### Video Link to view functionality
 
+### Video Link to view functionality
+https://drive.google.com/file/d/1IlWMZgHPE7yvNwM_U_4bWMLygX4SJdPe/view
 
 ### Screenshots
+
+Initialilzing the app and View all Employees
+
+![tracker1](https://user-images.githubusercontent.com/73642462/108005081-c848bb80-704b-11eb-9603-289266c6403c.PNG)
+View Current Roles and Departments
+
+![tracker2](https://user-images.githubusercontent.com/73642462/108004898-4c4e7380-704b-11eb-92af-c72bb7d49ddd.PNG)
+
+View Department Budget and Main Menu
+
+![tracker3 (3)](https://user-images.githubusercontent.com/73642462/108005204-31303380-704c-11eb-8dba-ce211e750554.PNG)
 

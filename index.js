@@ -318,18 +318,6 @@ const addEmployee = () => {
         type: "input",
         message: "What is their manager-id?",
       },
-      {
-        name: "department",
-        type: "rawlist",
-        message: "Which Deapartment does the employee work in?",
-        choices: [
-          "Sales",
-          "Engineering",
-          "Finance",
-          "Legal",
-          "Human Resources",
-        ],
-      },
     ])
     .then((answer) => {
       connection.query(query.selectRole, (error, data) => {
@@ -347,11 +335,20 @@ const addEmployee = () => {
               message: "What is the employee's role?",
               choices: roles,
             },
+            {
+              name: "department",
+              type: "rawlist",
+              message: "Which Department is this?",
+              choices: [
+                "Sales",
+                "Engineering",
+                "Finance",
+                "Legal",
+              ],
+            },
           ])
           .then((addRole) => {
             const role = addRole.role;
-
-            console.log(`Adding new employee`);
             connection.query(
               query.insertEmployee,
               {
